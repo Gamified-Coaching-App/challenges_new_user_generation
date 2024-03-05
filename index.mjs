@@ -31,13 +31,20 @@ async function createChallengeEntriesForUser(userId, challengeDataArray, tableNa
 }
 
 export async function handler(event) {
-    // Assume event contains user_id, season_id directly for simplicity
-    let { user_id, season_id } = event;
-
-    if (!user_id || !season_id) {
-        console.error("Missing required information from event.");
-        return { statusCode: 400, body: JSON.stringify({ error: "Bad request. Missing user_id or season_id" }) };
+    let data;
+    try {
+        data = JSON.parse(event.body);
+    } catch (e) {
+        console.error("Failed to parse event body as JSON:", e);
+        return { statusCode: 400, body: JSON.stringify({ error: "Bad request. Body is not valid JSON." }) };
     }
+    if (!data.user_id || !data.season_id) {
+        console.error("Missing required fields in the data.");
+        return { statusCode: 400, body: JSON.stringify({ error: "Bad request. Missing required fields." }) };
+    }
+    
+    // Assume event contains user_id, season_id directly for simplicity
+    let { user_id, season_id } = data;
 
     try {
         const templates = await getAllTemplates("challenges_template");
