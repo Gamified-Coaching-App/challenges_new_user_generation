@@ -32,19 +32,20 @@ async function createChallengeEntriesForUser(userId, challengeDataArray, tableNa
 
 export async function handler(event) {
     // Assume event contains user_id, season_id, and start_date directly for simplicity
-    let { user_id, season_id, start_date } = event;
+    let { user_id, season_id } = event;
 
-    if (!user_id || !season_id || !start_date) {
+    if (!user_id || !season_id) {
         console.error("Missing required information from event.");
-        return { statusCode: 400, body: JSON.stringify({ error: "Bad request. Missing user_id, season_id, or start_date." }) };
+        return { statusCode: 400, body: JSON.stringify({ error: "Bad request. Missing user_id or season_id" }) };
     }
 
     try {
         const templates = await getAllTemplates("challenges_template");
+
         let challengeDataArray = [];
 
-        // For simplicity, let's assume the user's average_skill needs to be fetched or is provided. Here we'll set a static value
-        let average_skill = 2.5; // Placeholder value
+        // Let's assume the average to be 2.5 km per day for new users
+        let average_skill = 2.5; 
 
         for (const template_data of templates) {
             // Convert from km to meters using the placeholder average_skill value
@@ -58,6 +59,10 @@ export async function handler(event) {
             let challenge_end_date = new Date(challenge_start_date);
             challenge_end_date.setDate(challenge_end_date.getDate() + template_data.duration - 1);
 
+            if (challenge_end_date.getMonth() !== challenge_start_date.getMonth()) {
+                console.log("Challenge end date falls into the next month. Skipping this challenge.");
+                continue; // Skip to the next iteration of the loop, not adding this challenge as it would not complete on time
+            }
             const formatted_start_date = challenge_start_date.toISOString().split('T')[0] + 'T00:00:00';
             const formatted_end_date = challenge_end_date.toISOString().split('T')[0] + 'T23:59:59';
 
