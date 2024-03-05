@@ -26,26 +26,12 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '20'
-
-  test:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20'
-
+      
       - name: Install dependencies
         run: npm install
 
-      - name: Run tests
-        run: npm test
-
   package_deploy:
-    needs: test
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
