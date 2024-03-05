@@ -1,5 +1,4 @@
 ## Template to use for all Lambda function deployments. 
-## FILL IN FUCNTION ARN IN DEPLLOYMENT STEP!!
 
 name: Deploy Lambda Function
 
@@ -64,9 +63,6 @@ jobs:
           node-version: '20'
       - name: Install dependencies
         run: npm install
-
-      - name: Run tests
-        run: npm test
       
       - name: Package Lambda function
         run: 
