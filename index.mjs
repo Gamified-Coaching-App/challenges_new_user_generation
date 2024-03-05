@@ -31,7 +31,7 @@ async function createChallengeEntriesForUser(userId, challengeDataArray, tableNa
 }
 
 export async function handler(event) {
-    // Assume event contains user_id, season_id, and start_date directly for simplicity
+    // Assume event contains user_id, season_id directly for simplicity
     let { user_id, season_id } = event;
 
     if (!user_id || !season_id) {
@@ -53,7 +53,7 @@ export async function handler(event) {
             target_meters = Math.round(target_meters / 10) * 10;
             const points = Math.round(target_meters * template_data.reward_factor) / 1000;
 
-            let challenge_start_date = new Date(start_date);
+            let challenge_start_date = new Date();
             challenge_start_date.setDate(challenge_start_date.getDate() + template_data.days_from_start);
 
             let challenge_end_date = new Date(challenge_start_date);
