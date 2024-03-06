@@ -1,5 +1,4 @@
 import aws from 'aws-sdk';
-
 const documentClient = new aws.DynamoDB.DocumentClient();
 
 export async function getAllTemplates(tableName) {
@@ -16,17 +15,15 @@ export async function getAllTemplates(tableName) {
     return templates;
 }
 
-export async function createChallengeEntries(challengeDataArray, tableName) {
-    for (const challengeData of challengeDataArray) {
-        const params = {
-            TableName: tableName,
-            Item: challengeData
-        };
-        try {
-            await documentClient.put(params).promise();
-        } catch (error) {
-            console.error("Failed to create challenge entry:", error);
-            // Optionally, handle the error (e.g., retry logic, logging, etc.)
-        }
+export async function createChallengeEntriesForUser(userId, challengeDataArray, tableName) {
+    let requestItems = challengeDataArray.map(challengeData => ({
+        PutRequest: { Item: challengeData }
+    }));
+
+    // Use batchWrite to insert the challenges into the table
+    while (requestItems.length > 0) {
+        const batch = requestItems.splice(0, 25);
+        const params = { RequestItems: { [tableName]: batch } };
+        await documentClient.batchWrite(params).promise();
     }
 }

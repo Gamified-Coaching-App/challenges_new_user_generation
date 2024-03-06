@@ -4,7 +4,7 @@ import * as utils from '../utils.mjs';
 // Mocking utility functions directly
 jest.mock('../utils.mjs', () => ({
   getAllTemplates: jest.fn(),
-  createChallengeEntries: jest.fn()
+  createChallengeEntriesForUser: jest.fn()
 }));
 
 // Mock uuid
@@ -24,7 +24,7 @@ describe('Challenge Handler Function', () => {
       reward_factor: 1,
       template_id: 'template-1',
     }]);
-    utils.createChallengeEntries.mockResolvedValue();
+    utils.createChallengeEntriesForUser.mockResolvedValue();
   });
 
   it('should create challenges successfully for new user', async () => {
@@ -44,7 +44,7 @@ describe('Challenge Handler Function', () => {
 
     // Verify the utility functions were called as expected
     expect(utils.getAllTemplates).toHaveBeenCalledWith("challenges_template");
-    expect(utils.createChallengeEntries).toHaveBeenCalledWith('test-user-id', expect.any(Array), "challenges");
+    expect(utils.createChallengeEntriesForUser).toHaveBeenCalledWith('test-user-id', expect.any(Array), "challenges");
   });
 
   it('should return an error for invalid JSON in event body', async () => {

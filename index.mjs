@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { getAllTemplates,  createChallengeEntries} from './utils.mjs';
+import { getAllTemplates,  createChallengeEntriesForUser} from './utils.mjs';
 
 export async function handler(event) {
     let data;
@@ -84,7 +84,7 @@ export async function handler(event) {
             });
         }
 
-        await createChallengeEntries(user_id, challengeDataArray, "challenges");
+        await createChallengeEntriesForUser(user_id, challengeDataArray, "challenges");
 
         return { statusCode: 200, body: JSON.stringify({ message: "Challenges created successfully for new user." }) };
     } catch (error) {
