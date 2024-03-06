@@ -85,12 +85,13 @@ export async function handler(event) {
 
             // Apply scaling to target_meters if duration is -1 to account for the remaining days in the month
             console.log("Scale factor:", scaleFactor);
+            console.log("Targer meters before:", target_meters);
             if(template_data.duration === -1) {
                 target_meters = target_meters * scaleFactor;
                 // Ensure target_meters is rounded off as needed
                 target_meters = Math.round(target_meters / 10) * 10;
             }
-            
+            console.log("Targer meters after:", target_meters);
 
             if (challenge_end_date.getMonth() !== challenge_start_date.getMonth()) {
                 console.log("Challenge end date falls into the next month. Skipping this challenge.");
