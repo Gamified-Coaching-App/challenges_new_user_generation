@@ -63,15 +63,31 @@ export async function handler(event) {
             let challenge_start_date = new Date();
             challenge_start_date.setDate(challenge_start_date.getDate() + template_data.days_from_start);
 
-            let challenge_end_date = new Date(challenge_start_date);
+            let challenge_end_date = new Date(challenge_start_date);    
+            let scaleFactor;
 
+            // If duration is -1, set the end date to the last day of the current month
             if (template_data.duration === -1) {
-                // Set to last day of the current month
+                // Get the last day of the month
                 challenge_end_date = new Date(challenge_start_date.getFullYear(), challenge_start_date.getMonth() + 1, 0);
+                // Calculate the scale factor based on the number of days left in the month
+                const total_days_in_the_month = challenge_end_date.getDate();
+                const todays_day = challenge_start_date.getDate();
+                scaleFactor = (total_days_in_the_month - todays_day) / total_days_in_the_month;
             } else {
                 // Add duration days to the start date
                 challenge_end_date.setDate(challenge_end_date.getDate() + template_data.duration - 1);
+                // If duration is not -1, scale factor is considered as 1 (no scaling)
+                scaleFactor = 1;
             }
+
+            // Apply scaling to target_meters if duration is -1
+            if(template_data.duration === -1) {
+                target_meters = target_meters * scaleFactor;
+                // Ensure target_meters is rounded off as needed
+                target_meters = Math.round(target_meters / 10) * 10;
+            }
+
             
 
             if (challenge_end_date.getMonth() !== challenge_start_date.getMonth()) {
