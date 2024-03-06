@@ -17,7 +17,7 @@ async function getAllTemplates(tableName) {
     return templates;
 }
 
-async function createChallengeEntriesForUser(userId, challengeDataArray, tableName) {
+export async function createChallengeEntriesForUser(userId, challengeDataArray, tableName) {
     let requestItems = challengeDataArray.map(challengeData => ({
         PutRequest: { Item: challengeData }
     }));
@@ -64,11 +64,19 @@ export async function handler(event) {
             challenge_start_date.setDate(challenge_start_date.getDate() + template_data.days_from_start);
 
             let challenge_end_date = new Date(challenge_start_date);
-            challenge_end_date.setDate(challenge_end_date.getDate() + template_data.duration - 1);
+
+            if (template_data.duration === -1) {
+                // Set to last day of the current month
+                challenge_end_date = new Date(challenge_start_date.getFullYear(), challenge_start_date.getMonth() + 1, 0);
+            } else {
+                // Add duration days to the start date
+                challenge_end_date.setDate(challenge_end_date.getDate() + template_data.duration - 1);
+            }
+            
 
             if (challenge_end_date.getMonth() !== challenge_start_date.getMonth()) {
                 console.log("Challenge end date falls into the next month. Skipping this challenge.");
-                continue; // Skip to the next iteration of the loop, not adding this challenge as it would not complete on time
+                continue;
             }
             const formatted_start_date = challenge_start_date.toISOString().split('T')[0] + 'T00:00:00';
             const formatted_end_date = challenge_end_date.toISOString().split('T')[0] + 'T23:59:59';
